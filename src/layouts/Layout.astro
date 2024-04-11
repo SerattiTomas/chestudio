@@ -1,0 +1,123 @@
+---
+import { SEO } from "astro-seo";
+import Footer from "@components/footer.astro";
+import "@fontsource-variable/inter/index.css";
+
+export interface Props {
+  title: string;
+}
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+
+const resolvedImageWithDomain = new URL(
+  "/opengraph.jpg",
+  Astro.site
+).toString();
+
+const { title } = Astro.props;
+
+const makeTitle = title ? title + " | " + "CHESTUDIO" : "CHESTUDIO";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="src/assets/logos/favicon.png" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <meta name="generator" content={Astro.generator} />
+
+    <SEO
+      title={makeTitle}
+      description="Chestudio es una consultora de abogados especializada en la resolucion de problemas."
+      canonical={canonicalURL}
+      openGraph={{
+        basic: {
+          url: canonicalURL,
+          type: "website",
+          title: `Chestudio`,
+          image: resolvedImageWithDomain,
+        },
+        image: {
+          alt: "Screenshot de la pagina de inicio de Chestudio",
+        },
+      }}
+    />
+  </head>
+  <body>
+    <slot />
+    <Footer />
+
+    <style is:global>
+      /* Improve Page speed */
+      /* https://css-tricks.com/almanac/properties/c/content-visibility/ */
+      @import url("https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&display=swap");
+      html {
+        scroll-behavior: smooth;
+      }
+      :root {
+        --color-azul-accent: #002d42;
+        --color-azul-francia: #39a7d8;
+        --color-celeste: #95e2ea;
+        --color-celeste-light: #daedf3;
+        --color-white: #fff;
+        --color-salmon: #f36b79;
+      }
+      img {
+        content-visibility: auto;
+      }
+      * {
+        font-family: "Archivo", sans-serif;
+        scroll-margin-top: -1px;
+      }
+      .text-aa {
+        color: var(--color-azul-accent);
+      }
+      .text-af {
+        color: var(--color-azul-francia);
+      }
+      .text-c {
+        color: var(--color-celeste);
+      }
+      .text-cl {
+        color: var(--color-celeste-light);
+      }
+      .text-s {
+        color: var(--color-salmon);
+      }
+      .bg-aa {
+        background-color: var(--color-azul-accent);
+      }
+      .bg-af {
+        background-color: var(--color-azul-francia);
+      }
+      .bg-c {
+        background-color: var(--color-celeste);
+      }
+      .bg-cl {
+        background-color: var(--color-celeste-light);
+      }
+      .bg-s {
+        background-color: var(--color-salmon);
+      }
+      .pill {
+        box-sizing: border-box;
+        background-color: transparent;
+        border: 2px solid var(--color-celeste);
+        border-radius: 4rem;
+        font-weight: 600;
+        padding: 1.25rem 2.5rem;
+        transition: all 0.5s ease-in-out;
+      }
+      .pill:hover {
+        color: var(--color-azul-accent);
+        background-color: var(--color-celeste);
+        box-shadow: 0 5px 15px var(--color-celeste);
+      }
+    </style>
+  </body>
+</html>

@@ -1,0 +1,108 @@
+---
+// @ts-ignore
+import { Icon } from "astro-icon";
+
+const features = [
+  {
+    title: "Litigios",
+    description:
+      "Contamos con amplia experiencia en litigios de toda índole, estando especializados en conflictos tecnológicos actuales.",
+    icon: "gavel",
+  },
+  {
+    title: "Contratos",
+    description:
+      "Prestamos asesoramiento contractual, y redactamos acuerdos y contratos para Empresas, Startups y emprendedores.",
+    icon: "contract_edit",
+  },
+  {
+    title: "Delitos Informáticos",
+    description:
+      "Asesoramos en phishing y estafas online, suplantación de identidad, sextorsión, difusión no consentida de material íntimo, y deepfakes.",
+    icon: "touchpad_mouse",
+  },
+  {
+    title: "Marcas",
+    description:
+      "Blindamos el negocio de emprendedores con la registración de su marca y la protección en línea.",
+    icon: "brand_family",
+  },
+  {
+    title: "Consumidor",
+    description:
+      "Efectuamos reclamos para la protección de los derechos de los consumidores.",
+    icon: "shopping_cart",
+  },
+  {
+    title: "Sucesiones",
+    description:
+      "Asesoramos y elaboramos planificaciones sucesorias, sobre todo las relacionadas con cuestiones digitales.",
+    icon: "diversity_3",
+  },
+  {
+    title: "Seguros",
+    description:
+      "Representamos a nuestros clientes en reclamos contra compañías de seguros en los asuntos relacionados con esa actividad.",
+    icon: "encrypted",
+  },
+  {
+    title: "Salud",
+    description:
+      "Estamos sumamente comprometidos con el derecho a la salud y discapacidad, por eso efectuamos reclamos y amparos contra prepagas y obras sociales.",
+    icon: "ecg_heart",
+  },
+  {
+    title: "Laboral",
+    description:
+      "Brindamos asesoramiento en torno a conflictos y reclamos laborales, sobre todo los relacionados con implementación de la tecnología en el ámbito laboral.",
+    icon: "business_center",
+  },
+  {
+    title: "Asesoramiento Contable e Impositivo",
+    description:
+      "Ofrecemos el asesoramiento contable e impositivo en caso de que lo necesiten. El equipo está liderado por Mariano Chalhub.",
+    icon: "calculate",
+  },
+];
+---
+
+<style>
+  section {
+    background-color: var(--color-celeste-light);
+  }
+  h3{
+    font-family: "Literata"
+  }
+  .material-symbols-outlined{
+    font-size: 2.5rem;
+    height: fit-content;
+  }
+</style>
+
+<section id="servicios" class="px-5 py-20 text-aa">
+  <div class="mt-16 md:mt-0 text-center">
+    <span class="text-3xl leading-3">*</span>
+    <h2 class="text-3xl lg:text-3xl lg:tracking-tight">Servicios</h2>
+    <p class="text-lg mt-4 text-balance">
+      Nos desempe&ntilde;amos en las siguientes areas
+    </p>
+  </div>
+
+  <div class="grid md:grid-cols-2 mx-auto mt-16 gap-y-16 gap-x-5 max-w-5xl justify-items-center">
+    {
+      features.map((item) => (
+        <div class="flex gap-4 items-center">
+          <div class="bg-c rounded-full p-5 w-20 h-20 grid place-content-center shrink-0">
+            <span class="material-symbols-outlined">
+              {item.icon}
+            </span>
+          </div>
+          <div class="max-w-xs">
+            <h3 class="font-semibold text-lg">{item.title}</h3>
+            <p class="font-light mt-2 leading-relaxed">{item.description}</p>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>

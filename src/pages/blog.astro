@@ -1,0 +1,80 @@
+---
+import { getCollection } from "astro:content";
+import { Picture } from "astro:assets";
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import Sectionhead from "@components/sectionhead.astro";
+import Navbarlight from "@components/navbar/navbarlight.astro";
+
+// Filter blog entries with 'ocultar: false' & date before current date
+const publishedBlogEntries = await getCollection("blog", ({ data }) => {
+  return !data.ocultar && data.fecha < new Date();
+});
+
+// Sort content entries by publication date
+publishedBlogEntries.sort(function (a, b) {
+  return b.data.fecha.valueOf() - a.data.fecha.valueOf();
+});
+---
+<style>
+  img{
+    height: 250px;
+  }
+</style>
+
+<Layout title="Blog">
+  <Navbarlight />
+  <Container>
+    <Sectionhead>
+      <Fragment slot="title">Novedades</Fragment>
+      <Fragment slot="desc">
+        ¡Enterate de nuestras ultimas noticias!
+      </Fragment>
+    </Sectionhead>
+    <main class="mt-16">
+      <ul class="grid gap-16 max-w-4xl mx-auto">
+        {
+          publishedBlogEntries.map((blogPostEntry, index) => (
+            <li>
+              <a href={`/blog/${blogPostEntry.slug}`}>
+                <div class="grid md:grid-cols-2 gap-5 md:gap-10 items-center">
+                  <Picture
+                    src={blogPostEntry.data.imagen.url}
+                    alt={blogPostEntry.data.imagen.texto_alternativo}
+                    sizes="(max-width: 800px) 100vw, 800px"
+                    width={800}
+                    height={600}
+                    loading={index <= 2 ? "eager" : "lazy"}
+                    decoding={index <= 2 ? "sync" : "async"}
+                    class="w-full rounded-md object-cover object-center bg-white"
+                  />
+                  <div>
+                    <span class="text-blue-400 uppercase tracking-wider text-sm font-medium">
+                      {blogPostEntry.data.categoria}
+                    </span>
+
+                    <h2 class="text-3xl font-semibold leading-snug tracking-tight mt-1 ">
+                      {blogPostEntry.data.titulo}
+                    </h2>
+
+                    <div class="flex gap-2 mt-3">
+                      <span class="text-gray-400">
+                        {blogPostEntry.data.autor}
+                      </span>
+                      <span class="text-gray-400">• </span>
+                      <time
+                        class="text-gray-400"
+                        datetime={blogPostEntry.data.fecha.toISOString()}>
+                        {blogPostEntry.data.fecha.toLocaleDateString()}
+                      </time>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </main>
+  </Container>
+</Layout>

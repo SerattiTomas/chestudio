@@ -1,0 +1,75 @@
+---
+import { Picture } from "astro:assets";
+---
+
+<style>
+  .pill {
+    box-sizing: border-box;
+    background-color: transparent;
+    border: 2px solid #fff;
+    border-radius: 4rem;
+    font-weight: 600;
+    padding: 1.25rem 2.5rem;
+    transition: all 0.5s ease-in-out;
+  }
+  .pill:hover {
+    color: var(--color-azul-accent);
+    background-color: #fff;
+    box-shadow: 0 5px 15px #fff;
+  }
+</style>
+
+<section id="about" class="py-20 px-5 text-aa">
+  <div class="my-20 md:mt-0 text-center grid justify-center">
+    <span class="text-3xl leading-3">*</span>
+    <h2 class="text-3xl lg:text-3xl lg:tracking-tight">Qui&eacute;nes Somos</h2>
+    <p class="text-lg max-w-3xl mt-4 text-balance">
+      Somos una red de abogados apasionados por el derecho y la tecnología. El
+      proyecto de CH Estudio nació con la idea de unir a los mejores
+      profesionales, para abordar las diferentes temáticas en conjunto de los
+      temas y problemáticas actuales.
+    </p>
+  </div>
+
+  <div class="grid md:flex md:items-center justify-center gap-5 mt-16">
+    <div class="grid gap-3">
+      <Picture
+        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?&fit=crop&w=280"
+        alt="Agustín Chalhub, abogado"
+        sizes="(max-width: 800px) 100vw, 400px"
+        width={400}
+        height={400}
+        class="transition group-hover:-translate-y-1 group-hover:shadow-xl bg-white object-cover object-center aspect-square"
+      />
+      <a class="text-c underline" href="asd">LINKEDIN<span class="material-symbols-outlined">
+        north_east
+        </span></a>
+    </div>
+    <div class="grid gap-3">
+      <h3 class="text-4xl">
+        Agust&iacute;n <span class="font-bold">Chalhub</span>
+      </h3>
+      <span class="flex gap-2 rounded-full bg-af w-fit px-6 text-white uppercase">
+        Abogado
+      </span>
+      <div class="max-w-md grid gap-2">
+        <p>
+          Agustín es abogado egresado de la <span class="font-bold">Universidad de Buenos Aires</span> (UBA). A
+          lo largo de su carrera profesional adquirió una gran experiencia en
+          estudios jurídicos de primer nivel (Marval O' Farrel & Mairal,
+          Nicholson & Cano, Bildenlex Abogados).
+        </p>
+        <p>
+          Durante ese camino se desempeñó en distintas áreas del Derecho, lo
+          cual hoy en día le proporciona un <span class="font-bold">valor agregado a la hora de asesorar
+          y aconsejar a los clientes.</span>
+        </p>
+        <p>
+          Actualmente se desempeña en litigios de alta complejidad, y en Derecho
+          y Nuevas Tecnologías (resguardo de evidencia digital, conflictos
+          tecnológicos, cibercrimen).
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

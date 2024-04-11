@@ -1,0 +1,74 @@
+---
+import { getCollection } from "astro:content";
+import { Picture } from "astro:assets";
+
+const publishedBlogEntries = await getCollection("blog", ({ data }) => {
+  return !data.ocultar && data.fecha < new Date();
+});
+
+publishedBlogEntries.sort(function (a, b) {
+  return b.data.fecha.valueOf() - a.data.fecha.valueOf();
+});
+
+const latestPublishedBlogEntries = publishedBlogEntries.slice(0, 6)
+---
+
+<style>
+  section {
+    background-color: var(--color-azul-accent);
+  }
+  .novedad img{
+    max-height: 200px;
+  }
+  .novedad .texto{
+    min-height: 142px;
+    grid-template-rows: auto 1fr;
+  }
+  .novedad h3{
+    font-family: "Literata, sans-serif";
+  }
+</style>
+<section class="py-20" id="novedades">
+  <div class="mt-16 md:mt-0 text-center text-white">
+    <span class="text-3xl leading-3">*</span>
+    <h2 class="text-3xl lg:text-3xl lg:tracking-tight">Novedades y Publicaciones</h2>
+    <p class="text-lg mt-4 text-balance">
+      Enterate de nuestras &uacute;ltimas noticias.
+    </p>
+  </div>
+
+  <ul class="flex flex-wrap justify-center gap-5 max-w-7xl mx-auto my-20">
+    {
+      latestPublishedBlogEntries.map((blogPostEntry, index) => (
+        <li>
+          <a href={`/blog/${blogPostEntry.slug}`}>
+            <div class="grid items-start max-w-sm bg-white rounded-xl text-center novedad">
+              <Picture
+                src={blogPostEntry.data.imagen.url}
+                alt={blogPostEntry.data.imagen.texto_alternativo}
+                sizes="(max-width: 800px) 100vw, 800px"
+                width={800}
+                height={600}
+                loading={index <= 2 ? "eager" : "lazy"}
+                decoding={index <= 2 ? "sync" : "async"}
+                class="rounded-md object-cover object-center"
+              />
+              <div class="grid justify-items-center gap-3 p-5 texto">
+                <div class="flex rounded-full bg-af w-fit h-fit px-6">
+                  <time
+                    class="text-white"
+                    datetime={blogPostEntry.data.fecha.toISOString()}>
+                    {blogPostEntry.data.fecha.toLocaleDateString()}
+                  </time>
+                </div>
+                <h3 class="text-2xl text-aa leading-snug tracking-tight">
+                  {blogPostEntry.data.titulo}
+                </h3>
+              </div>
+            </div>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>

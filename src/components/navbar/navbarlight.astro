@@ -1,0 +1,86 @@
+---
+import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
+import { Image } from "astro:assets";
+import logoFullWhite from "assets/logos/full_black.png";
+
+const menuitems = [
+  {
+    title: "Quiénes somos",
+    path: "/#about",
+  },
+  {
+    title: "Servicios",
+    path: "/#servicios",
+  },
+  {
+    title: "Inicio",
+    path: "/",
+    img: "https://th.bing.com/th/id/OIP._NO0YnctpHeUYt_BJdgsBwHaCI?rs=1&pid=ImgDetMain",
+  },
+  {
+    title: "Novedades",
+    path: "/blog",
+  },
+  {
+    title: "Contacto",
+    path: "/#contacto",
+  },
+];
+---
+
+<style>
+  img {
+    max-width: 300px;
+    width: 70vw;
+  }
+  li{
+    transition: all 0.25s ease-in-out;
+  }
+  li:hover{
+    opacity: 0.5;
+  }
+</style>
+
+<header class="flex flex-col lg:flex-row justify-center items-center my-5">
+  <Astronav>
+    <div class="flex w-full lg:w-auto items-center justify-center gap-5">
+      <a href="/" class="text-lg lg:hidden">
+        <Image src={logoFullWhite} alt="CHESTUDIO" />
+      </a>
+      <div class="block lg:hidden">
+        <MenuIcon class="w-10 h-10 text-black" />
+      </div>
+    </div>
+
+    <MenuItems class="hidden w-full lg:w-auto mt-2 lg:flex lg:mt-0">
+      <ul class="flex flex-col lg:flex-row items-center lg:gap-5">
+        {
+          menuitems.map((item, index) => (
+            <>
+              {item.img && (
+                <li>
+                  <a
+                    href={item.path}
+                    class="flex lg:px-3 py-2 items-center text-black hover:text-gray-900">
+                    <Image class="hidden lg:block lg:mx-20" src={logoFullWhite} alt="Home" />
+                    <span class="block lg:hidden">{item.title}</span>
+                  </a>
+                </li>
+              )}
+
+              {!item.img && (
+                <li>
+                  <a
+                    href={item.path}
+                    class="flex lg:px-3 py-2 items-center text-black hover:text-gray-900 w-max">
+                    <span>{item.title}</span>
+                  </a>
+                </li>
+              )}
+            </>
+          ))
+        }
+      </ul>
+    </MenuItems>
+  </Astronav>
+</header>

@@ -1,0 +1,103 @@
+---
+import { Icon } from "astro-icon";
+import logoFullWhite from "assets/logos/full_white.png";
+import { Image } from "astro:assets";
+
+const menuitems = [
+  {
+    title: "Quiénes Somos",
+    path: "/#about",
+  },
+  {
+    title: "Servicios",
+    path: "/#servicios",
+  },
+  {
+    title: "Novedades",
+    path: "/blog",
+  },
+  {
+    title: "Contacto",
+    path: "/#contacto",
+  },
+];
+
+const socials = [
+  {
+    name: "Instagram",
+    icon: "ri:instagram-line",
+    path: "https://instagram.com/chestudioabogados",
+  },
+  {
+    name: "Mail",
+    icon: "ic:outline-mail",
+    path: "mailto:chestudioinfo@gmail.com",
+  },
+  {
+    name: "Teléfono",
+    icon: "ic:round-whatsapp",
+    path: "tel:11-2233-4455",
+  },
+];
+---
+<style>
+  footer {
+    border-top-left-radius: 10rem;
+    background-color: var(--color-azul-accent);
+  }
+  img{
+    max-width: 300px;
+  }
+</style>
+
+<footer class="mt-20 p-20 flex flex-col md:flex-row md:items-end gap-5 lg:gap-20">
+  <div class="grid gap-5 text-white lg:ms-20">
+    <Image
+      src={logoFullWhite}
+      alt="Chestudio"
+    />
+    <p class="text-md mt-4 max-w-72">
+      Ofrecemos servicios Jur&iacute;dicos enfocados en Derecho y
+      Tecnolog&iacute;a. Ponete en contacto con nosotros.
+    </p>
+  </div>
+
+  <ul class="md:ms-auto grid md:grid-cols-2 gap-x-2 md:gap-x-10 lg:gap-x-20 gap-y-3">
+    {
+      menuitems.map((item) => (
+        <>
+          {
+            <li>
+              <a href={item.path} class="text-c">
+                {item.title}
+              </a>
+            </li>
+          }
+        </>
+      ))
+    }
+  </ul>
+
+  <ul class="flex lg:me-20">
+    {
+      socials.map((item, index) => (
+        <>
+          {
+            <li>
+              <a
+                href={item.path}
+                rel="noreferrer"
+                target="_blank"
+                class="flex lg:px-3 py-2 items-center text-gray-600">
+                <Icon
+                  class="text-white hover:text-gray-400 w-7 h-7"
+                  name={item.icon}
+                />
+              </a>
+            </li>
+          }
+        </>
+      ))
+    }
+  </ul>
+</footer>
