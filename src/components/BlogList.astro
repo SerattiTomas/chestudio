@@ -1,0 +1,58 @@
+---
+import { createSignal, onMount } from "solid-js";
+
+interface Post {
+  title: string;
+  subtitle: string;
+  image: {
+    url: string;
+    altText: string;
+  };
+  date: string;
+  category: string;
+  author: string;
+  tags: string[];
+  content: string;
+  slug: string;
+}
+
+const [posts, setPosts] = createSignal<Post[]>([]);
+
+onMount(async () => {
+  try {
+    const response = await fetch("http://localhost:3001/posts");
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    setPosts(data);
+  } catch (error) {
+    console.error("Fetch error:", error);
+  }
+});
+---
+
+<article>
+  {
+    posts().map((post) => (
+      <section>
+        <h2>{post.title}</h2>
+        <h3>{post.subtitle}</h3>
+        <img src={post.image.url} alt={post.image.altText} />
+        <p>
+          <strong>Fecha:</strong> {post.date}
+        </p>
+        <p>
+          <strong>Categoría:</strong> {post.category}
+        </p>
+        <p>
+          <strong>Autor:</strong> {post.author}
+        </p>
+        <p>
+          <strong>Etiquetas:</strong> {post.tags.join(", ")}
+        </p>
+        <div>{post.content}</div>
+      </section>
+    ))
+  }
+</article>

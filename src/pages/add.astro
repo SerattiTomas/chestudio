@@ -1,0 +1,101 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import Sectionhead from "@components/sectionhead.astro";
+import Navbarlight from "@components/navbar/navbarlight.astro";
+
+if (Astro.request.method === "POST") {
+  try {
+    const data = await Astro.request.formData();
+    const title = data.get("title");
+    const subtitle = data.get("subtitle");
+    const imageUrl = data.get("imageUrl");
+    const altText = data.get("altText");
+    const date = data.get("date");
+    const category = data.get("category");
+    const author = data.get("author");
+    const tags = data.get("tags")?.toString().split(",");
+    const content = data.get("content");
+    console.log(
+      title,
+      subtitle,
+      imageUrl,
+      altText,
+      date,
+      category,
+      author,
+      tags,
+      content
+    );
+
+    // Do something with the data
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
+}
+---
+
+<style>
+  img {
+    height: 250px;
+  }
+  form * {
+    margin: 5px;
+  }
+  input,
+  button,
+  textarea {
+    box-sizing: border-box;
+    background-color: transparent;
+    border: 2px solid var(--color-celeste);
+    border-radius: 4rem;
+    font-weight: 600;
+    padding: 1.25rem 2.5rem;
+    transition: all 0.5s ease-in-out;
+    resize: none;
+  }
+</style>
+
+<Layout title="Blog">
+  <Navbarlight />
+  <Container>
+    <Sectionhead>
+      <Fragment slot="title">Añadir Noticia</Fragment>
+      <Fragment slot="desc"></Fragment>
+    </Sectionhead>
+    <main class="mt-16">
+      <form action="http://localhost:3001/add-post" method="post">
+        <label for="title">Título:</label>
+        <input type="text" id="title" name="title" required />
+        <br />
+        <label for="subtitle">Subtítulo:</label>
+        <input type="text" id="subtitle" name="subtitle" required />
+        <br />
+        <label for="imageUrl">URL de la Imagen:</label>
+        <input type="text" id="imageUrl" name="imageUrl" required />
+        <br />
+        <label for="altText">Texto Alternativo de la Imagen:</label>
+        <input type="text" id="altText" name="altText" required />
+        <br />
+        <label for="date">Fecha:</label>
+        <input type="datetime-local" id="date" name="date" required />
+        <br />
+        <label for="category">Categoría:</label>
+        <input type="text" id="category" name="category" required />
+        <br />
+        <label for="author">Autor:</label>
+        <input type="text" id="author" name="author" required />
+        <br />
+        <label for="tags">Etiquetas (separadas por comas):</label>
+        <input type="text" id="tags" name="tags" required />
+        <br />
+        <label for="content">Contenido:</label>
+        <textarea id="content" name="content" required></textarea>
+        <br />
+        <button type="submit">Añadir Entrada</button>
+      </form>
+    </main>
+  </Container>
+</Layout>
