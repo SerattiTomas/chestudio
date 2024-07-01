@@ -1,62 +1,121 @@
 ---
-import Layout from "@layouts/Layout.astro";
-import Container from "@components/container.astro";
-import Navbarlight from "@components/navbar/navbarlight.astro";
+import { getEntryBySlug } from "../../src/api/blog.js";
 
-const { params } = Astro;
-const slug = params.slug;
+export async function getStaticPaths() {
+  // Aquí deberías obtener todas las rutas posibles desde tu backend
+  const response = await fetch("http://localhost:3000/api/blog/slugs");
+  const slugs = await response.json();
 
-let post: any = {};
-
-async function fetchPost(slug) {
-  const response = await fetch(`http://localhost:3001/posts/${slug}`);
-  post = await response.json();
+  return slugs.map((slug) => ({ params: { slug } }));
 }
 
-await fetchPost(slug);
+const { slug } = Astro.params;
+const post = await getEntryBySlug(slug);
+
+if (!post) {
+  throw new Error(`Post not found for slug: ${slug}`);
+}
 ---
 
-<Layout title={post.title}>
-  <Navbarlight />
-  <Container>
-    <div class="mx-auto max-w-3xl mt-14">
-      <span class="text-blue-400 uppercase tracking-wider text-sm font-medium">
-        {post.category}
-      </span>
-      <h1
-        class="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight">
-        {post.title}
-      </h1>
-      <div class="flex gap-2 mt-3 items-center flex-wrap md:flex-nowrap">
-        <span class="text-gray-400">
-          {post.author}
-        </span>
-        <span class="text-gray-400">•</span>
-        <time
-          class="text-gray-400"
-          datetime={new Date(post.date).toISOString()}>
-          {new Date(post.date).toLocaleDateString()}
-        </time>
-        <span class="text-gray-400 hidden md:block">•</span>
-        <div class="w-full md:w-auto flex flex-wrap gap-3">
-          {
-            post.tags.map((tag) => (
-              <span class="text-sm text-gray-500">#{tag}</span>
-            ))
-          }
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/src/assets/logos/logo_white.png"
+      media="(prefers-color-scheme: light)"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/src/assets/logos/logo_black.png"
+      media="(prefers-color-scheme: dark)"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <meta name="generator" content="Astro v3.6.4" />
+    <title>{post.title} | CHESTUDIO</title>
+    <link rel="canonical" href={`https://chestudio.com/blog/${slug}/`} />
+    <meta
+      name="description"
+      content="Chestudio es una consultora de abogados especializada en la resolución de problemas."
+    />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:title" content="Chestudio" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://chestudio.com/opengraph.jpg" />
+    <meta property="og:url" content={`https://chestudio.com/blog/${slug}/`} />
+    <meta
+      property="og:image:url"
+      content="https://chestudio.com/opengraph.jpg"
+    />
+    <meta
+      property="og:image:alt"
+      content="Screenshot de la página de inicio de Chestudio"
+    />
+    <link rel="stylesheet" href="/_astro/_slug_.b5814980.css" />
+    <style>
+      img {
+        max-width: 300px;
+        width: 70vw;
+      }
+      li {
+        transition: all 0.25s ease-in-out;
+      }
+      li:hover {
+        opacity: 0.5;
+      }
+    </style>
+  </head>
+  <body>
+    <header
+      class="flex flex-col lg:flex-row justify-center items-center mt-8 mb-5">
+      <!-- Tu contenido del header -->
+    </header>
+    <div class="max-w-screen-xl mx-auto px-5">
+      <div class="mx-auto max-w-3xl mt-14">
+        <span class="text-blue-400 uppercase tracking-wider text-sm font-medium"
+          >Información</span
+        >
+        <h1
+          class="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight">
+          {post.title}
+        </h1>
+        <div class="flex gap-2 mt-3 items-center flex-wrap md:flex-nowrap">
+          <span class="text-gray-400">{post.author}</span>
+          <span class="text-gray-400">•</span>
+          <time class="text-gray-400" datetime={post.date}
+            >{new Date(post.date).toLocaleDateString("es-ES")}</time
+          >
+          <span class="text-gray-400 hidden md:block">•</span>
+          <div class="w-full md:w-auto flex flex-wrap gap-3">
+            {
+              post.tags.map((tag) => (
+                <span class="text-sm text-gray-500">#{tag}</span>
+              ))
+            }
+          </div>
         </div>
       </div>
+      <div class="mx-auto prose prose-lg mt-6 max-w-3xl">
+        {post.content}
+      </div>
+      <div class="text-center mt-8">
+        <a
+          href="/blog"
+          class="bg-gray-100 px-5 py-3 rounded-md hover:bg-gray-200 transition">
+          ← Volver al Blog
+        </a>
+      </div>
     </div>
-
-    <div class="mx-auto prose prose-lg mt-6 max-w-3xl">
-      <div>{post.content}</div>
-    </div>
-    <div class="text-center mt-8">
-      <a
-        href="/blog"
-        class="bg-gray-100 px-5 py-3 rounded-md hover:bg-gray-200 transition">
-        ← Volver al Blog
-      </a>
-    </div>
-  </Container>
-</Layout>
+    <footer
+      class="mt-20 p-20 flex flex-col md:flex-row md:items-end gap-5 lg:gap-20">
+      <!-- Tu contenido del footer -->
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,68 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import Sectionhead from "@components/sectionhead.astro";
+import Navbarlight from "@components/navbar/navbarlight.astro";
+---
+
+<Layout title="Login">
+  <Navbarlight />
+  <Container>
+    <Sectionhead>
+      <Fragment slot="title">Login</Fragment>
+      <Fragment slot="desc"></Fragment>
+    </Sectionhead>
+    <main class="mt-16">
+      <form id="loginForm">
+        <label>
+          Email:
+          <input type="text" id="username" name="username" required />
+        </label>
+        <label>
+          Contraseña:
+          <input type="password" id="password" name="password" required />
+        </label>
+        <button type="submit">Iniciar sesión</button>
+      </form>
+    </main>
+  </Container>
+</Layout>
+
+<script>
+  window.addEventListener("load", () => {
+    const form = document.getElementById("loginForm");
+    /* const username = document.getElementById("username");
+    const password = document.getElementById("password"); */
+    const username = "admin";
+    const password = "admin";
+
+    form!.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const response = await fetch("http://localhost:3001/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      }).then((data: any) => {
+        if (!data.ok) {
+          alert("Credenciales invalidas");
+          throw new Error("Credenciales inválidas");
+        }
+
+        const { token } = data;
+
+        // Guardar el token en localStorage para mantener la sesión
+        localStorage.setItem("tokenChestudio", token);
+        console.log("Token agregado de manera exitosa");
+
+        // Redireccionar al panel de administrador
+        //window.location("/admin");
+      });
+    });
+  });
+</script>

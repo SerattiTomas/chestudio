@@ -4,16 +4,111 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { marked } from "marked";
+import cors from "cors";
+import mysql from "mysql2";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 3001;
+const SECRET_KEY = "gnasildxc"; // Cambia esto por una clave secreta segura
 
-// Middleware para analizar los datos del formulario
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+// Servir los archivos estáticos de Astro.js
+app.use(express.static(path.join(__dirname, "../dist")));
+
+// Configurar conexión a MySQL
+const db = mysql.createConnection({
+  host: "bh8966.banahosting.com",
+  user: "vlyldxch_user",
+  password: "q31fn42err9h",
+  database: "vlyldxch_chestudio",
+});
+
+db.connect((err) => {
+  if (err) throw err;
+  console.log("Connected to MySQL");
+});
+
+// Rutas de autenticación
+app.post("/api/register", (req, res) => {
+  const hashedPassword = bcrypt.hashSync("admin", 10);
+
+  res.status(201).json({ message: "pass: " + hashedPassword });
+});
+
+app.post("/api/login", (req, res) => {
+  const { username, password } = req.body;
+  console.log(username, password);
+
+  const sql = "SELECT * FROM users WHERE username = ?";
+  db.query(sql, [username], (err, results) => {
+    if (err) return res.status(500).json({ message: "Error de base de datos" });
+    if (results.length === 0) return res.status(401).json({ message: "Credenciales invalidas" });
+
+    const user = results[0];
+    const isPasswordValid = bcrypt.compareSync(password, user.password);
+
+    if (!isPasswordValid) return res.status(401).json({ message: "Credenciales invalidas 2" });
+
+    console.log("Login con exito!");
+
+    const token = jwt.sign({ id: user.id }, SECRET_KEY, { expiresIn: "1d" });
+    res.json({ token });
+  });
+});
+
+// Middleware de autenticación
+const authenticate = (req, res, next) => {
+  const token = req.headers["authorization"];
+  if (!token) return res.status(401).json({ message: "Access denied" });
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(401).json({ message: "Invalid token" });
+  }
+};
+
+app.get("/api/entries", authenticate, (req, res) => {
+  res.json(entries);
+});
+
+app.post("/api/entries", authenticate, (req, res) => {
+  const newEntry = { id: Date.now(), ...req.body };
+  entries.push(newEntry);
+  res.json(newEntry);
+});
+
+app.put("/api/entries/:id", authenticate, (req, res) => {
+  const { id } = req.params;
+  const index = entries.findIndex((entry) => entry.id == id);
+  if (index !== -1) {
+    entries[index] = { ...entries[index], ...req.body };
+    res.json(entries[index]);
+  } else {
+    res.status(404).json({ message: "Entry not found" });
+  }
+});
+
+app.delete("/api/entries/:id", authenticate, (req, res) => {
+  const { id } = req.params;
+  const index = entries.findIndex((entry) => entry.id == id);
+  if (index !== -1) {
+    entries.splice(index, 1);
+    res.json({ message: "Entry deleted" });
+  } else {
+    res.status(404).json({ message: "Entry not found" });
+  }
+});
 
 // Crear la carpeta de blog si no existe
 const blogDir = path.join(__dirname, "../src/content/blog");
@@ -96,10 +191,6 @@ ${content}
   });
 });
 
-// Servir los archivos estáticos de Astro.js
-app.use(express.static(path.join(__dirname, "../dist")));
-
-// Ruta para obtener todas las entradas del blog
 // Ruta para obtener todas las entradas del blog
 app.get("/posts", (req, res) => {
   fs.readdir(blogDir, (err, files) => {

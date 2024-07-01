@@ -1,0 +1,137 @@
+---
+import { onMount } from "solid-js";
+import { createSignal } from "solid-js";
+import Cookies from "js-cookie";
+
+let entries: any = [];
+let [title, setTitle] = createSignal("");
+let [content, setContent] = createSignal("");
+let [author, setAuthor] = createSignal("");
+let [tags, setTags] = createSignal("");
+let [editingEntry, setEditingEntry]: any = createSignal(null);
+
+onMount(async () => {
+  const token = localStorage.getItem("tokenChestudio");
+  console.log(token);
+
+  if (token) {
+    // Verificar el token en el backend
+    fetch("http://localhost:3000/api/admin", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Acceso no autorizado");
+        }
+        //state.isAdmin = true; // Marcar como administrador si el token es válido
+      })
+      .catch((error) => {
+        console.error(error.message);
+        //navigate("/login"); // Redirigir a la página de inicio de sesión si el token no es válido
+      });
+  } else {
+    //navigate("/login"); // Redirigir a la página de inicio de sesión si no hay token
+  }
+
+  const response = await fetch("http://localhost:3001/api/entries", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (response.ok) {
+    entries = await response.json();
+  } else {
+    Cookies.remove("token");
+    window.location.href = "/login";
+  }
+});
+
+async function addEntry() {
+  const newEntry = {
+    title: title(),
+    content: content(),
+    author: author(),
+    tags: tags().split(","),
+  };
+  const response: any = await fetch("http://localhost:3001/api/entries", {
+    method: "POST",
+    body: JSON.stringify(newEntry),
+  });
+  const entry = await response.json();
+  entries.push(entry);
+  setTitle("");
+  setContent("");
+  setAuthor("");
+  setTags("");
+}
+
+async function editEntry(entry) {
+  setTitle(entry.title);
+  setContent(entry.content);
+  setAuthor(entry.author);
+  setTags(entry.tags.join(","));
+  setEditingEntry(entry);
+}
+
+async function updateEntry() {
+  const updatedEntry = {
+    title: title(),
+    content: content(),
+    author: author(),
+    tags: tags().split(","),
+  };
+  const response = await fetch(
+    `http://localhost:3001/api/entries/${editingEntry().id}`,
+    {
+      method: "PUT",
+      body: JSON.stringify(updatedEntry),
+    }
+  );
+  let entry = await response.json();
+  entries = entries.map((e: any) => (e.id === entry.id ? entry : e));
+  setTitle("");
+  setContent("");
+  setAuthor("");
+  setTags("");
+  setEditingEntry(null);
+}
+
+async function deleteEntry(id) {
+  await fetch(`http://localhost:3001/api/entries/${id}`, {
+    method: "DELETE",
+  });
+  entries = entries.filter((entry: any) => entry.id !== id);
+}
+---
+
+<div>
+  <h1>Admin Panel</h1>
+  <form on:submit|preventDefault={editingEntry() ? updateEntry : addEntry}>
+    <input type="text" placeholder="Title" [value]={title} required />
+    <textarea placeholder="Content" [value]={content} required></textarea>
+    <input type="text" placeholder="Author" [value]={author} required />
+    <input type="text" placeholder="Tags (comma separated)" [value]={tags} />
+    <button type="submit"
+      >{editingEntry() ? "Update Entry" : "Add Entry"}</button
+    >
+  </form>
+
+  <ul>
+    {
+      entries.map((entry: any) => (
+        <li>
+          <h2>{entry.title}</h2>
+          <p>{entry.content}</p>
+          <p>
+            <strong>Author:</strong> {entry.author}
+          </p>
+          <p>
+            <strong>Tags:</strong> {entry.tags.join(", ")}
+          </p>
+          <button on-click={() => editEntry(entry)}>Edit</button>
+          <button on-click={() => deleteEntry(entry.id)}>Delete</button>
+        </li>
+      ))
+    }
+  </ul>
+</div>
